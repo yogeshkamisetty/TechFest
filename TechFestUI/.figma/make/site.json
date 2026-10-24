@@ -1,0 +1,10 @@
+{
+  "description": "Empowering students to discover and register for technical events, this platform enhances participation in college festivals through a vibrant, user-friendly interface.",
+  "robots": {
+    "index": false
+  },
+  "accessibility": {
+    "addBypassLinks": false,
+    "ignoreReducedMotion": false
+  }
+}
