@@ -2,9 +2,9 @@
 
 **TechFest Hub** is a web-based **Technical Fest Event Management System** developed using Java web technologies. It provides a centralized platform for students to explore technical events, register for events, manage their registrations, and for administrators to manage events and participants.
 
-## 🚀 Features
+## Features
 
-### 👨‍🎓 Student Features
+### Student Features
 
 - Student account registration and login
 - Browse available technical events
@@ -16,9 +16,9 @@
 - Simulated payment flow
 - View registered events
 - Cancel registrations
-- Secure session-based authentication
+- Session-based authentication
 
-### 🛠️ Admin Features
+### Admin Features
 
 - Admin authentication
 - Admin dashboard
@@ -28,7 +28,7 @@
 - Manage event status
 - Monitor participants and registration details
 
-### 📅 Event Management
+### Event Management
 
 Each event can contain:
 
@@ -43,23 +43,23 @@ Each event can contain:
 - Event status
 - Coordinator details
 
-## 🧑‍💻 Technology Stack
+## Technology Stack
 
 | Technology | Usage |
 |---|---|
-| **Java** | Backend programming |
-| **Java Servlets** | Request handling and application logic |
-| **JSP** | Dynamic web pages |
-| **HTML** | Page structure |
-| **CSS** | User interface styling |
-| **JavaScript** | Client-side interactions |
-| **JDBC** | Database connectivity |
-| **Oracle XE** | Database |
-| **Maven** | Project and dependency management |
-| **Apache Tomcat 9** | Web server |
-| **Eclipse IDE** | Development environment |
+| Java | Backend programming |
+| Java Servlets | Request handling and application logic |
+| JSP | Dynamic web pages |
+| HTML | Page structure |
+| CSS | User interface styling |
+| JavaScript | Client-side interactions |
+| JDBC | Database connectivity |
+| Oracle XE | Database |
+| Maven | Project and dependency management |
+| Apache Tomcat 9 | Web server |
+| Eclipse IDE | Development environment |
 
-## 🏗️ Architecture
+## Architecture
 
 The application follows a simple layered Java web application structure:
 
@@ -92,7 +92,7 @@ Oracle Database
 - `AuthenticationFilter` – Controls authenticated access
 - `DBConnection` – Establishes Oracle database connectivity
 
-## 📂 Project Structure
+## Project Structure
 
 ```text
 TechFestHub/
@@ -133,7 +133,7 @@ TechFestHub/
 └── README.md
 ```
 
-## 🗄️ Database
+## Database
 
 The application uses **Oracle XE** with JDBC.
 
@@ -186,9 +186,9 @@ REGISTERED_AT
 STATUS
 ```
 
-The database also uses **sequences and triggers** for generating IDs and registration numbers.
+The database also uses sequences and triggers for generating IDs and registration numbers.
 
-## ⚙️ Setup
+## Setup
 
 ### Prerequisites
 
@@ -236,21 +236,15 @@ database/sample-data.sql
 
 ### 4. Configure Database Connection
 
-The application currently uses an Oracle XE JDBC connection:
+The application uses an Oracle XE JDBC connection:
 
 ```text
 jdbc:oracle:thin:@localhost:1521:xe
 ```
 
-Database credentials can be configured in:
+Update the database username and password in the database connection configuration according to your local Oracle setup.
 
-```text
-DBConnection.java
-```
-
-Update the username and password according to your local Oracle setup.
-
-> **Important:** Do not commit real database credentials or passwords to a public repository.
+> Do not commit real database credentials or passwords to a public repository.
 
 ### 5. Configure Tomcat
 
@@ -274,14 +268,14 @@ http://localhost:8080/TechFestHub_Simplified/
 
 The exact URL may vary depending on the configured Tomcat context root.
 
-## 🔐 User Roles
+## User Roles
 
 | Role | Access |
 |---|---|
-| **Student** | Browse events, register, manage registrations |
-| **Admin** | Manage events and view registrations |
+| Student | Browse events, register, manage registrations |
+| Admin | Manage events and view registrations |
 
-## 🔄 Application Flow
+## Application Flow
 
 ```text
 User
@@ -313,7 +307,7 @@ User
      View Registrations
 ```
 
-## 📌 Project Highlights
+## Project Highlights
 
 - Role-based access for students and administrators
 - Oracle database integration using JDBC
@@ -326,7 +320,7 @@ User
 - Maven-based project configuration
 - Responsive web interface using HTML, CSS and JavaScript
 
-## 🔮 Future Enhancements
+## Future Enhancements
 
 - Real online payment gateway integration
 - Email notifications for registrations
@@ -336,7 +330,7 @@ User
 - Event attendance tracking
 - Password reset through email
 
-## 👥 Project
+## Project
 
 **TechFest Hub — Technical Fest Event Management System**
 
