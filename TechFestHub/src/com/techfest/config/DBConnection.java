@@ -4,40 +4,34 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
+/**
+ * Database Connection Manager for Oracle Database.
+ * Aligned with B.Tech Full Stack Development Syllabus (Unit I: JDBC).
+ */
 public class DBConnection {
+
+    private static final String URL = "jdbc:oracle:thin:@localhost:1521:xe";
+    private static final String USER = "system";
+    private static final String PASS = "25342534";
+
     static {
         try {
-            Class.forName("oracle.jdbc.OracleDriver");
-        } catch (ClassNotFoundException e) {
-            try {
-                Class.forName("oracle.jdbc.driver.OracleDriver");
-            } catch (ClassNotFoundException ignored) {
-            }
+            // Creation of object for DriverClass and registering Driver
+            oracle.jdbc.driver.OracleDriver driver = new oracle.jdbc.driver.OracleDriver();
+            DriverManager.registerDriver(driver);
+            System.out.println("Oracle JDBC Driver Registered Successfully");
+        } catch (Exception e) {
+            System.err.println("Driver Registration Failed: " + e.getMessage());
         }
     }
 
     private DBConnection() {
     }
 
-    private static String getSetting(String key, String fallback) {
-        String val = System.getenv(key);
-        if (val == null || val.trim().isEmpty()) {
-            val = System.getProperty(key);
-        }
-        if (val == null || val.trim().isEmpty()) {
-            val = fallback;
-        }
-        return val;
-    }
-
+    /**
+     * Establishes and returns connection to Oracle Database
+     */
     public static Connection getConnection() throws SQLException {
-        String url = getSetting("TECHFEST_DB_URL", "jdbc:oracle:thin:@localhost:1521:xe");
-        String user = getSetting("TECHFEST_DB_USER", "techfest");
-        String password = getSetting("TECHFEST_DB_PASSWORD", "techfest");
-
-        if (url == null || user == null || password == null) {
-            throw new SQLException("Database configuration is missing.");
-        }
-        return DriverManager.getConnection(url, user, password);
+        return DriverManager.getConnection(URL, USER, PASS);
     }
 }

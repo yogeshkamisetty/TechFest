@@ -1,26 +1,39 @@
 package com.techfest.model;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 
-public class Event {
-    private long eventId;
+public class Event implements Serializable {
+    private static final long serialVersionUID = 1L;
+
+    private Long eventId;
+    private String slug;
     private String eventName;
     private String category;
     private String description;
     private Timestamp eventDate;
+    private String cardDate;
     private String venue;
     private BigDecimal registrationFee;
     private Integer maxParticipants;
     private Timestamp registrationDeadline;
     private String status;
 
-    public long getEventId() {
+    public Long getEventId() {
         return eventId;
     }
 
-    public void setEventId(long eventId) {
+    public void setEventId(Long eventId) {
         this.eventId = eventId;
+    }
+
+    public String getSlug() {
+        return slug;
+    }
+
+    public void setSlug(String slug) {
+        this.slug = slug;
     }
 
     public String getEventName() {
@@ -53,6 +66,14 @@ public class Event {
 
     public void setEventDate(Timestamp eventDate) {
         this.eventDate = eventDate;
+    }
+
+    public String getCardDate() {
+        return cardDate;
+    }
+
+    public void setCardDate(String cardDate) {
+        this.cardDate = cardDate;
     }
 
     public String getVenue() {

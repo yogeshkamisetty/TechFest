@@ -79,7 +79,6 @@ export function renderNavbar(active = 'Home', showToran = true) {
         </nav>
         ${mobileUserActionHtml}
       </div>
-      ${showToran ? '<div class="toran-ds home-toran" aria-hidden="true"></div>' : ''}
     </header>
   `;
 
@@ -116,8 +115,8 @@ export function renderNavbar(active = 'Home', showToran = true) {
   }
 
   // Logout listener
-  const handleLogout = () => {
-    State.logout();
+  const handleLogout = async () => {
+    await State.logout();
     window.location.href = 'index.html';
   };
   const logoutBtn = document.getElementById('nav-logout-btn');
@@ -132,7 +131,6 @@ export function renderFooter(mountId = 'footer-mount') {
 
   mount.innerHTML = `
     <footer class="footer-ds" data-layer="footer">
-      <div class="toran-ds" aria-hidden="true"></div>
       <div class="footer-cols">
         <div>
           <span class="brand-ds">
@@ -157,7 +155,6 @@ export function renderFooter(mountId = 'footer-mount') {
       </div>
       <div class="copyright">
         © 2026 TECH FEST HUB
-        <a class="handoff-footer-link" href="events.html">DESIGN SYSTEM &amp; HANDOFF →</a>
       </div>
     </footer>
   `;

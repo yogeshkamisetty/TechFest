@@ -2,7 +2,7 @@ package com.techfest.servlet;
 
 import java.io.IOException;
 import java.sql.SQLException;
-import java.util.List;
+import java.util.HashMap;
 import java.util.Map;
 
 import javax.servlet.ServletException;
@@ -13,7 +13,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.techfest.dao.EventDAO;
 import com.techfest.dao.RegistrationDAO;
-import com.techfest.model.Event;
+import com.techfest.dao.UserDAO;
+import com.techfest.util.JsonUtil;
 
 @WebServlet("/admin/dashboard")
 public class AdminDashboardServlet extends HttpServlet {
@@ -21,32 +22,40 @@ public class AdminDashboardServlet extends HttpServlet {
 
     private final EventDAO eventDAO = new EventDAO();
     private final RegistrationDAO registrationDAO = new RegistrationDAO();
+    private final UserDAO userDAO = new UserDAO();
 
     @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
         try {
-            List<Event> events = eventDAO.getAllEvents();
-            Map<Long, Integer> registrationCounts = registrationDAO.getRegistrationCountsByEvent();
+            int totalEvents = eventDAO.countTotalEvents();
+            int openEvents = eventDAO.countOpenEvents();
+            int totalStudents = userDAO.countStudents();
+            int confirmedPasses = registrationDAO.countConfirmedRegistrations();
 
-            int totalEvents = events.size();
-            int openEvents = 0;
-            int totalRegistrations = 0;
+            Map<String, Object> stats = new HashMap<>();
+            stats.put("totalEvents", totalEvents);
+            stats.put("openEvents", openEvents);
+            stats.put("totalStudents", totalStudents);
+            stats.put("confirmedPasses", confirmedPasses);
 
-            for (Event event : events) {
-                if ("OPEN".equalsIgnoreCase(event.getStatus())) {
-                    openEvents++;
-                }
-                totalRegistrations += registrationCounts.getOrDefault(event.getEventId(), 0);
+            String accept = request.getHeader("Accept");
+            if ((accept != null && accept.contains("application/json")) || request.getParameter("json") != null || request.getHeader("X-Requested-With") != null) {
+                JsonUtil.sendJson(response, HttpServletResponse.SC_OK, stats);
+                return;
             }
 
-            request.setAttribute("events", events);
-            request.setAttribute("registrationCounts", registrationCounts);
-            request.setAttribute("totalEvents", totalEvents);
-            request.setAttribute("openEvents", openEvents);
-            request.setAttribute("totalRegistrations", totalRegistrations);
-            request.getRequestDispatcher("/admin/dashboard.jsp").forward(request, response);
-        } catch (SQLException ex) {
-            throw new ServletException("Could not load admin dashboard", ex);
+            request.setAttribute("stats", stats);
+            request.setAttribute("events", eventDAO.getAllEvents());
+
+            if (getServletContext().getResource("/admin/dashboard.jsp") != null) {
+                request.getRequestDispatcher("/admin/dashboard.jsp").forward(request, response);
+            } else {
+                response.sendRedirect(request.getContextPath() + "/admin.html");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new ServletException("Failed to load admin metrics", e);
         }
     }
 }

@@ -2,36 +2,40 @@ package com.techfest.util;
 
 import java.security.SecureRandom;
 import java.util.Base64;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 public class CsrfUtil {
-    public static final String CSRF_SESSION_KEY = "csrfToken";
+    private static final String CSRF_TOKEN_SESSION_ATTR = "CSRF_TOKEN";
+    private static final SecureRandom RANDOM = new SecureRandom();
 
     private CsrfUtil() {
     }
 
-    public static String ensureToken(HttpSession session) {
-        Object existing = session.getAttribute(CSRF_SESSION_KEY);
-        if (existing instanceof String) {
-            return (String) existing;
+    public static String getToken(HttpSession session) {
+        if (session == null) {
+            return "";
         }
-
-        byte[] random = new byte[24];
-        new SecureRandom().nextBytes(random);
-        String token = Base64.getUrlEncoder().withoutPadding().encodeToString(random);
-        session.setAttribute(CSRF_SESSION_KEY, token);
+        String token = (String) session.getAttribute(CSRF_TOKEN_SESSION_ATTR);
+        if (token == null) {
+            byte[] bytes = new byte[32];
+            RANDOM.nextBytes(bytes);
+            token = Base64.getUrlEncoder().withoutPadding().encodeToString(bytes);
+            session.setAttribute(CSRF_TOKEN_SESSION_ATTR, token);
+        }
         return token;
     }
 
-    public static boolean isValid(HttpServletRequest request) {
+    public static boolean isValidToken(HttpServletRequest request) {
         HttpSession session = request.getSession(false);
         if (session == null) {
             return false;
         }
-        String expected = (String) session.getAttribute(CSRF_SESSION_KEY);
-        String provided = request.getParameter("csrfToken");
-        return expected != null && expected.equals(provided);
+        String sessionToken = (String) session.getAttribute(CSRF_TOKEN_SESSION_ATTR);
+        String reqToken = request.getParameter("csrf_token");
+        if (reqToken == null) {
+            reqToken = request.getHeader("X-CSRF-Token");
+        }
+        return sessionToken != null && sessionToken.equals(reqToken);
     }
 }

@@ -48,6 +48,18 @@ function initStorage() {
     regs[DEMO_USER.email] = DEMO_REGISTRATIONS;
     writeStorage(KEYS.registrations, regs);
   }
+
+  // Asynchronously attempt backend session sync if served through Tomcat
+  if (typeof fetch === 'function') {
+    fetch('api/auth/me', { headers: { 'Accept': 'application/json' } })
+      .then(res => res.ok ? res.json() : null)
+      .then(data => {
+        if (data && data.authenticated && data.email) {
+          writeStorage(KEYS.session, data.email);
+        }
+      })
+      .catch(() => {});
+  }
 }
 
 initStorage();
@@ -69,50 +81,125 @@ export const State = {
     const overrides = readStorage(KEYS.overrides, {});
     overrides[slug] = { ...overrides[slug], ...changes };
     writeStorage(KEYS.overrides, overrides);
+
+    // If Tomcat backend is reachable, also sync to Oracle DB
+    if (typeof fetch === 'function') {
+      fetch('admin/event/save', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ slug, ...changes })
+      }).catch(() => {});
+    }
   },
 
   getUser() {
     const email = readStorage(KEYS.session, null);
     if (!email) return null;
     const users = readStorage(KEYS.users, []);
-    const found = users.find((u) => u.email === email);
+    const found = users.find((u) => u.email.toLowerCase() === email.toLowerCase());
     if (!found) return null;
     const { password: _, ...safeUser } = found;
     return safeUser;
   },
 
-  login(email, password) {
+  async login(email, password) {
     const norm = email.trim().toLowerCase();
-    const users = readStorage(KEYS.users, []);
-    const found = users.find((u) => u.email.toLowerCase() === norm && u.password === password);
-    if (found) {
-      writeStorage(KEYS.session, found.email);
-      return true;
+    try {
+      const res = await fetch('login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: norm, password })
+      });
+      if (res.ok) {
+        const data = await res.json();
+        if (data && data.success && data.user) {
+          const users = readStorage(KEYS.users, []);
+          const idx = users.findIndex((u) => u.email.toLowerCase() === norm);
+          const safeUser = {
+            name: data.user.name,
+            email: norm,
+            department: data.user.department || 'General',
+            role: data.user.role || 'student'
+          };
+          if (idx >= 0) users[idx] = { ...users[idx], ...safeUser };
+          else users.push(safeUser);
+          writeStorage(KEYS.users, users);
+          writeStorage(KEYS.session, norm);
+          return true;
+        }
+      }
+      return false;
+    } catch (err) {
+      console.warn('Backend login unavailable, checking local fallback:', err);
+      const users = readStorage(KEYS.users, []);
+      const found = users.find((u) => u.email.toLowerCase() === norm && u.password === password);
+      if (found) {
+        writeStorage(KEYS.session, found.email);
+        return true;
+      }
+      return false;
     }
-    return false;
   },
 
-  signup(data) {
+  async signup(data) {
     const norm = data.email.trim().toLowerCase();
-    const users = readStorage(KEYS.users, []);
-    if (users.some((u) => u.email.toLowerCase() === norm)) {
-      return 'exists';
+    try {
+      const res = await fetch('signup', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: data.name.trim(),
+          email: norm,
+          password: data.password,
+          department: data.department ? data.department.trim() : 'General'
+        })
+      });
+      if (res.ok) {
+        const json = await res.json();
+        if (json && json.success) {
+          const users = readStorage(KEYS.users, []);
+          const newUser = {
+            name: data.name.trim(),
+            email: norm,
+            department: data.department ? data.department.trim() : 'General',
+            role: 'student'
+          };
+          const idx = users.findIndex((u) => u.email.toLowerCase() === norm);
+          if (idx >= 0) users[idx] = newUser;
+          else users.push(newUser);
+          writeStorage(KEYS.users, users);
+          writeStorage(KEYS.session, norm);
+          return 'ok';
+        }
+      } else if (res.status === 409) {
+        return 'exists';
+      }
+      return 'error';
+    } catch (err) {
+      console.warn('Backend signup unavailable, using local fallback:', err);
+      const users = readStorage(KEYS.users, []);
+      if (users.some((u) => u.email.toLowerCase() === norm)) {
+        return 'exists';
+      }
+      const newUser = {
+        name: data.name.trim(),
+        email: norm,
+        department: data.department ? data.department.trim() : 'General',
+        password: data.password,
+        role: 'student'
+      };
+      users.push(newUser);
+      writeStorage(KEYS.users, users);
+      writeStorage(KEYS.session, norm);
+      return 'ok';
     }
-    const newUser = {
-      name: data.name.trim(),
-      email: norm,
-      department: data.department.trim(),
-      password: data.password,
-      role: 'student',
-    };
-    users.push(newUser);
-    writeStorage(KEYS.users, users);
-    writeStorage(KEYS.session, norm);
-    return 'ok';
   },
 
-  logout() {
+  async logout() {
     localStorage.removeItem(KEYS.session);
+    try {
+      await fetch('logout', { method: 'POST', headers: { 'Accept': 'application/json' } });
+    } catch (e) {}
   },
 
   isRegistered(slug) {
@@ -148,6 +235,15 @@ export const State = {
 
     all[user.email] = [newReg, ...userRegs.filter((r) => r.slug !== slug)];
     writeStorage(KEYS.registrations, all);
+
+    if (typeof fetch === 'function') {
+      fetch('event-register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ slug, teamName: extra.team || '', track: extra.track || '' })
+      }).catch(() => {});
+    }
+
     return 'ok';
   },
 

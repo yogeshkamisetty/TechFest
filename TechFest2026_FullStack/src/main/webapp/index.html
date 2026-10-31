@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tech Fest Hub — Where Code Meets Celebration</title>
+  <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+  <link rel="stylesheet" href="css/style.css?v=6">
+  <script type="importmap">
+    {
+      "imports": {
+        "three": "./js/vendor/three.module.js"
+      }
+    }
+  </script>
+</head>
+<body class="home-frame" data-layer="01-home">
+  <div class="page-wash" aria-hidden="true"></div>
+
+  <!-- Navbar Mount (showToran=false for HomePage) -->
+  <div id="navbar-mount"></div>
+
+  <main>
+    <!-- Hero Section -->
+    <section class="home-hero" data-layer="hero">
+      <div class="home-jaali"></div>
+      <div class="home-kolam"></div>
+      <div class="home-container hero-grid">
+        <div class="hero-left">
+          <div class="hindi-ribbon">तकनीकी उत्सव</div>
+          <div class="hero-pill"><i></i>TECH FEST 2026 • REGISTRATIONS OPEN</div>
+          <div class="hero-title" role="heading" aria-level="1">
+            <span>Discover.</span>
+            <span>Compete.</span>
+            <em>Innovate.</em>
+          </div>
+          <p class="hero-sub-home">One hub to explore technical events, compete with your campus and register in seconds.</p>
+          <div class="home-hero-actions">
+            <a href="events.html" class="btn btn-primary btn-size-l is-default" data-layer="btn btn-primary">
+              <span>Explore Events</span>
+              <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M14 7l5 5-5 5" /></svg>
+            </a>
+            <a href="signup.html" id="hero-sec-btn" class="btn btn-secondary btn-size-l is-default" data-layer="btn btn-secondary">
+              <span>Create Account</span>
+            </a>
+          </div>
+          <div class="hero-stats">
+            <div><strong id="stat-total-events">08</strong><span>EVENTS</span></div>
+            <div><strong>7</strong><span>CATEGORIES</span></div>
+            <div><strong>1</strong><span>CAMPUS</span></div>
+          </div>
+        </div>
+        <div class="hero-mandala" data-layer="3d-hero-mandala" aria-label="Glossy festival mandala with technical event categories" role="img">
+          <div class="mandala-glow"></div>
+          <div id="lotus-canvas-mount" class="lotus-3d"></div>
+          <span class="gem-chip gem-0">Coding</span>
+          <span class="gem-chip gem-1">Quiz</span>
+          <span class="gem-chip gem-2">Robotics</span>
+          <span class="gem-chip gem-3">Hackathon</span>
+          <span class="gem-chip gem-4">Gaming</span>
+          <span class="gem-chip gem-5">Design</span>
+          <b class="gulal p0"></b><b class="gulal p1"></b><b class="gulal p2"></b><b class="gulal p3"></b>
+          <b class="gulal p4"></b><b class="gulal p5"></b><b class="gulal p6"></b><b class="gulal p7"></b>
+          <b class="gulal p8"></b><b class="gulal p9"></b><b class="gulal p10"></b><b class="gulal p11"></b>
+        </div>
+      </div>
+    </section>
+
+    <!-- Categories Arena Section -->
+    <section class="home-categories home-container" data-layer="categories">
+      <div class="section-title centered" role="heading" aria-level="2">Pick your <em>arena</em></div>
+      <div class="arena-tiles" id="arena-tiles">
+        <!-- Rendered via JS -->
+      </div>
+    </section>
+
+    <!-- Featured Events Section -->
+    <section class="home-featured home-container" data-layer="featured">
+      <div class="featured-head">
+        <div class="section-title" role="heading" aria-level="2">Featured events</div>
+        <a href="events.html" style="display: inline-flex; align-items: center; gap: 8px; border: 0; background: none; color: #0B7A70; font-weight: 600; font-size: 16px; text-decoration: none;">
+          View all <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="width: 20px; height: 20px;"><path d="M5 12h14M14 7l5 5-5 5" /></svg>
+        </a>
+      </div>
+      <div class="home-event-grid" data-layer="event-grid" id="home-featured-grid">
+        <!-- Rendered via JS -->
+      </div>
+    </section>
+
+    <!-- How It Works Section -->
+    <section class="home-how" id="how-it-works" data-layer="how-it-works">
+      <div class="home-container">
+        <div class="section-title centered" role="heading" aria-level="2">Three steps to the <em>arena</em></div>
+        <div class="how-steps active-2" id="how-steps">
+          <div class="step-connector"><i></i><i></i><i></i></div>
+          <article data-step="1">
+            <span class="step-num">01</span>
+            <span class="step-clay">◉</span>
+            <div role="heading" aria-level="3">Create your account</div>
+            <p>Sign up with your college email and department.</p>
+          </article>
+          <article class="active" data-step="2">
+            <span class="step-num">02</span>
+            <span class="step-clay">✦</span>
+            <div role="heading" aria-level="3">Pick an event</div>
+            <p>Browse by category and open the one that excites you.</p>
+          </article>
+          <article data-step="3">
+            <span class="step-num">03</span>
+            <span class="step-clay">▰</span>
+            <div role="heading" aria-level="3">Get your pass</div>
+            <p>Register in one click and keep it under My Registrations.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- CTA Band Section -->
+    <section class="home-cta home-container" data-layer="cta-band">
+      <div>
+        <div class="cta-head">Your seat in the arena is waiting.</div>
+        <div class="home-hero-actions">
+          <a href="signup.html" id="cta-primary-btn" class="btn btn-primary btn-size-l is-default">
+            <span>Sign Up Free</span>
+          </a>
+          <a href="events.html" class="btn btn-secondary btn-size-l is-default">
+            <span>Browse Events</span>
+          </a>
+        </div>
+      </div>
+      <div class="cta-ring" data-layer="3d-cta-ring">
+        <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i>
+        <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i>
+      </div>
+    </section>
+  </main>
+
+  <!-- Footer Mount -->
+  <div class="home-footer" id="footer-mount"></div>
+
+  <!-- Page Scripts -->
+  <script type="module">
+    import { renderNavbar, renderFooter } from './js/nav.js';
+    import { initLotusMandala } from './js/lotus-mandala.js';
+    import { State } from './js/state.js';
+    import { featuredSlugs } from './js/data.js';
+    import { renderEventCard } from './js/components.js';
+
+    // 1. Navbar and Footer (showToran=false for HomePage)
+    renderNavbar('Home', false);
+    renderFooter('footer-mount');
+
+    const user = State.getUser();
+    if (user) {
+      const heroSec = document.getElementById('hero-sec-btn');
+      if (heroSec) {
+        heroSec.href = 'my-registrations.html';
+        heroSec.innerHTML = '<span>My Registrations</span>';
+      }
+      const ctaPri = document.getElementById('cta-primary-btn');
+      if (ctaPri) {
+        ctaPri.href = 'my-registrations.html';
+        ctaPri.innerHTML = '<span>My Registrations</span>';
+      }
+    }
+
+    // 2. Initialize 3D Lotus Canvas
+    const canvasMount = document.getElementById('lotus-canvas-mount');
+    if (canvasMount) {
+      initLotusMandala(canvasMount);
+    }
+
+    // 3. Render Categories Arena
+    const cats = [
+      ['Coding', '</>'],
+      ['Quiz', '?'],
+      ['Robotics', '⌁'],
+      ['Hackathon', '✦'],
+      ['Gaming', '◆'],
+      ['Design', '◒']
+    ];
+    const events = State.getEvents();
+    const statEvents = document.getElementById('stat-total-events');
+    if (statEvents) {
+      statEvents.textContent = String(events.length).padStart(2, '0');
+    }
+
+    const arenaMount = document.getElementById('arena-tiles');
+    if (arenaMount) {
+      arenaMount.innerHTML = cats.map(([name, glyph]) => {
+        const count = events.filter(e => e.category === name).length;
+        const countStr = String(count).padStart(2, '0');
+        const countLabel = count === 1 ? 'EVENT' : 'EVENTS';
+        return `
+          <button type="button" class="arena-tile cat-${name.toLowerCase()}" onclick="window.location.href='events.html?category=${name}'">
+            <span class="arena-emblem">${glyph}</span>
+            <b>${name}</b>
+            <small>${countStr} ${countLabel}</small>
+          </button>
+        `;
+      }).join('');
+    }
+
+    // 4. Render Featured Events
+    const featuredMount = document.getElementById('home-featured-grid');
+    if (featuredMount) {
+      const featured = featuredSlugs
+        .map(slug => events.find(e => e.slug === slug))
+        .filter(Boolean);
+      featuredMount.innerHTML = featured.map(e => renderEventCard(e, State.isRegistered(e.slug))).join('');
+    }
+
+    // 5. Interactive How It Works steps
+    const howSteps = document.getElementById('how-steps');
+    if (howSteps) {
+      const articles = howSteps.querySelectorAll('article');
+      articles.forEach((art, idx) => {
+        const stepNum = idx + 1;
+        art.addEventListener('mouseenter', () => {
+          howSteps.className = `how-steps active-${stepNum}`;
+          articles.forEach(a => a.classList.remove('active'));
+          art.classList.add('active');
+        });
+      });
+    }
+  </script>
+</body>
+</html>

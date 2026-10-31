@@ -1,18 +1,24 @@
 package com.techfest.model;
 
-public class User {
-    private long userId;
+import java.io.Serializable;
+import java.sql.Timestamp;
+
+public class User implements Serializable {
+    private static final long serialVersionUID = 1L;
+
+    private Long userId;
     private String fullName;
     private String email;
-    private String passwordHash;
+    private transient String passwordHash;
     private String role;
     private String department;
+    private Timestamp createdAt;
 
-    public long getUserId() {
+    public Long getUserId() {
         return userId;
     }
 
-    public void setUserId(long userId) {
+    public void setUserId(Long userId) {
         this.userId = userId;
     }
 
@@ -54,5 +60,13 @@ public class User {
 
     public void setDepartment(String department) {
         this.department = department;
+    }
+
+    public Timestamp getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(Timestamp createdAt) {
+        this.createdAt = createdAt;
     }
 }

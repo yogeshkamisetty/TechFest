@@ -1,40 +1,90 @@
 package com.techfest.model;
 
+import java.io.Serializable;
 import java.sql.Timestamp;
 
-public class Registration {
-    private long registrationId;
-    private long userId;
-    private long eventId;
+public class Registration implements Serializable {
+    private static final long serialVersionUID = 1L;
+
+    private Long registrationId;
+    private String regNumber;
+    private Long userId;
+    private Long eventId;
+    private String eventSlug;
+    private String eventName;
+    private String teamName;
+    private String trackSelected;
     private Timestamp registeredAt;
     private String status;
-
     private String userName;
     private String userEmail;
-    private String eventName;
+    private String department;
 
-    public long getRegistrationId() {
+    public Registration() {
+    }
+
+    public Long getRegistrationId() {
         return registrationId;
     }
 
-    public void setRegistrationId(long registrationId) {
+    public void setRegistrationId(Long registrationId) {
         this.registrationId = registrationId;
     }
 
-    public long getUserId() {
+    public String getRegNumber() {
+        return regNumber;
+    }
+
+    public void setRegNumber(String regNumber) {
+        this.regNumber = regNumber;
+    }
+
+    public Long getUserId() {
         return userId;
     }
 
-    public void setUserId(long userId) {
+    public void setUserId(Long userId) {
         this.userId = userId;
     }
 
-    public long getEventId() {
+    public Long getEventId() {
         return eventId;
     }
 
-    public void setEventId(long eventId) {
+    public void setEventId(Long eventId) {
         this.eventId = eventId;
+    }
+
+    public String getEventSlug() {
+        return eventSlug;
+    }
+
+    public void setEventSlug(String eventSlug) {
+        this.eventSlug = eventSlug;
+    }
+
+    public String getEventName() {
+        return eventName;
+    }
+
+    public void setEventName(String eventName) {
+        this.eventName = eventName;
+    }
+
+    public String getTeamName() {
+        return teamName;
+    }
+
+    public void setTeamName(String teamName) {
+        this.teamName = teamName;
+    }
+
+    public String getTrackSelected() {
+        return trackSelected;
+    }
+
+    public void setTrackSelected(String trackSelected) {
+        this.trackSelected = trackSelected;
     }
 
     public Timestamp getRegisteredAt() {
@@ -69,11 +119,11 @@ public class Registration {
         this.userEmail = userEmail;
     }
 
-    public String getEventName() {
-        return eventName;
+    public String getDepartment() {
+        return department;
     }
 
-    public void setEventName(String eventName) {
-        this.eventName = eventName;
+    public void setDepartment(String department) {
+        this.department = department;
     }
 }

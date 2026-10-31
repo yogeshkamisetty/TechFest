@@ -5,14 +5,38 @@
                              http://xmlns.jcp.org/xml/ns/javaee/web-app_4_0.xsd"
          version="4.0">
 
-    <display-name>TechFest2026</display-name>
+    <display-name>TechFest2026_FullStack</display-name>
 
     <welcome-file-list>
         <welcome-file>index.html</welcome-file>
         <welcome-file>index.jsp</welcome-file>
     </welcome-file-list>
 
-    <!-- Ensure modern static assets are served with proper MIME types on Tomcat -->
+    <!-- Authentication & Security Filter -->
+    <filter>
+        <filter-name>AuthenticationFilter</filter-name>
+        <filter-class>com.techfest.filter.AuthenticationFilter</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>AuthenticationFilter</filter-name>
+        <url-pattern>/admin/*</url-pattern>
+        <url-pattern>/api/admin/*</url-pattern>
+        <url-pattern>/my-registrations</url-pattern>
+        <url-pattern>/my-registrations.html</url-pattern>
+        <url-pattern>/my-registrations.jsp</url-pattern>
+        <url-pattern>/event-register</url-pattern>
+        <url-pattern>/api/registrations/*</url-pattern>
+    </filter-mapping>
+
+    <!-- Session Configuration -->
+    <session-config>
+        <session-timeout>30</session-timeout>
+        <cookie-config>
+            <http-only>true</http-only>
+        </cookie-config>
+    </session-config>
+
+    <!-- MIME type mappings for modern web assets & ES Modules on Apache Tomcat -->
     <mime-mapping>
         <extension>js</extension>
         <mime-type>text/javascript</mime-type>

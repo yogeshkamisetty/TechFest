@@ -1,92 +1,133 @@
 package com.techfest.servlet;
 
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.sql.SQLException;
-import java.util.regex.Pattern;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import com.techfest.dao.UserDAO;
 import com.techfest.model.User;
-import com.techfest.util.CsrfUtil;
+import com.techfest.util.JsonUtil;
 import com.techfest.util.PasswordUtil;
 
 @WebServlet("/signup")
 public class SignupServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
-    private static final Pattern EMAIL_PATTERN = Pattern.compile("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$");
-
     private final UserDAO userDAO = new UserDAO();
 
     @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        if (!CsrfUtil.isValid(request)) {
-            response.sendError(HttpServletResponse.SC_FORBIDDEN, "Invalid CSRF token.");
-            return;
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        if (getServletContext().getResource("/signup.jsp") != null) {
+            request.getRequestDispatcher("/signup.jsp").forward(request, response);
+        } else {
+            response.sendRedirect(request.getContextPath() + "/signup.html");
+        }
+    }
+
+    @Override
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        String name = null;
+        String email = null;
+        String password = null;
+        String department = null;
+        boolean isJson = false;
+
+        String contentType = request.getContentType();
+        if (contentType != null && contentType.toLowerCase().contains("application/json")) {
+            isJson = true;
+            try (BufferedReader reader = request.getReader()) {
+                JsonObject json = JsonParser.parseReader(reader).getAsJsonObject();
+                if (json.has("name")) name = json.get("name").getAsString();
+                if (json.has("email")) email = json.get("email").getAsString();
+                if (json.has("password")) password = json.get("password").getAsString();
+                if (json.has("department")) department = json.get("department").getAsString();
+            } catch (Exception e) {
+                JsonUtil.sendJson(response, HttpServletResponse.SC_BAD_REQUEST, Map.of("error", "Invalid JSON"));
+                return;
+            }
+        } else {
+            name = request.getParameter("name");
+            email = request.getParameter("email");
+            password = request.getParameter("password");
+            department = request.getParameter("department");
         }
 
-        String fullName = trim(request.getParameter("fullName"));
-        String email = trim(request.getParameter("email"));
-        String password = request.getParameter("password");
-        String confirmPassword = request.getParameter("confirmPassword");
-        String department = trim(request.getParameter("department"));
-
-        String validationMessage = validateInput(fullName, email, password, confirmPassword);
-        if (validationMessage != null) {
-            response.sendRedirect(request.getContextPath() + "/signup.jsp?error=" + encode(validationMessage));
+        if (name == null || name.trim().isEmpty() || email == null || email.trim().isEmpty()
+                || password == null || password.trim().isEmpty()) {
+            if (isJson) {
+                JsonUtil.sendJson(response, HttpServletResponse.SC_BAD_REQUEST, Map.of("error", "All fields are required."));
+            } else {
+                request.setAttribute("error", "All fields are required.");
+                request.getRequestDispatcher("/signup.jsp").forward(request, response);
+            }
             return;
         }
-
-        User user = new User();
-        user.setFullName(fullName);
-        user.setEmail(email.toLowerCase());
-        user.setPasswordHash(PasswordUtil.hashPassword(password));
-        user.setDepartment(department);
-        user.setRole("STUDENT");
 
         try {
+            User existing = userDAO.findByEmail(email);
+            if (existing != null) {
+                if (isJson) {
+                    JsonUtil.sendJson(response, HttpServletResponse.SC_CONFLICT, Map.of("error", "An account with this email already exists."));
+                } else {
+                    request.setAttribute("error", "An account with this email already exists.");
+                    request.getRequestDispatcher("/signup.jsp").forward(request, response);
+                }
+                return;
+            }
+
+            User user = new User();
+            user.setFullName(name.trim());
+            user.setEmail(email.trim().toLowerCase());
+            user.setPasswordHash(PasswordUtil.hashPassword(password));
+            user.setDepartment(department == null ? "General" : department.trim());
+            user.setRole("STUDENT");
+
             userDAO.createUser(user);
-            response.sendRedirect(request.getContextPath() + "/login.jsp?message=" + encode("Account created successfully."));
-        } catch (SQLException ex) {
-            String msg = ex.getMessage() != null && ex.getMessage().toUpperCase().contains("UNIQUE")
-                    ? "Email already exists."
-                    : "Unable to create account right now.";
-            response.sendRedirect(request.getContextPath() + "/signup.jsp?error=" + encode(msg));
-        }
-    }
+            User created = userDAO.findByEmail(email);
 
-    private String validateInput(String fullName, String email, String password, String confirmPassword) {
-        if (isBlank(fullName) || isBlank(email) || isBlank(password) || isBlank(confirmPassword)) {
-            return "All required fields must be filled.";
-        }
-        if (fullName.length() < 3 || fullName.length() > 100) {
-            return "Full name must be between 3 and 100 characters.";
-        }
-        if (!EMAIL_PATTERN.matcher(email).matches()) {
-            return "Enter a valid email address.";
-        }
-        if (password.length() < 8) {
-            return "Password must be at least 8 characters.";
-        }
-        if (!password.equals(confirmPassword)) {
-            return "Passwords do not match.";
-        }
-        return null;
-    }
+            HttpSession session = request.getSession(true);
+            session.setAttribute("userId", created.getUserId());
+            session.setAttribute("userName", created.getFullName());
+            session.setAttribute("userEmail", created.getEmail());
+            session.setAttribute("userRole", created.getRole().toUpperCase());
+            session.setAttribute("userDept", created.getDepartment());
+            session.setAttribute("user", created); // Store JavaBean in session
 
-    private String trim(String value) {
-        return value == null ? null : value.trim();
-    }
+            Map<String, Object> safeUser = new HashMap<>();
+            safeUser.put("id", created.getUserId());
+            safeUser.put("name", created.getFullName());
+            safeUser.put("email", created.getEmail());
+            safeUser.put("role", "student");
+            safeUser.put("department", created.getDepartment());
 
-    private boolean isBlank(String value) {
-        return value == null || value.trim().isEmpty();
-    }
-
-    private String encode(String value) {
-        return value.replace(" ", "+");
+            if (isJson) {
+                Map<String, Object> res = new HashMap<>();
+                res.put("success", true);
+                res.put("user", safeUser);
+                res.put("redirect", "index.html");
+                JsonUtil.sendJson(response, HttpServletResponse.SC_CREATED, res);
+            } else {
+                response.sendRedirect(request.getContextPath() + "/index.html");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            if (isJson) {
+                JsonUtil.sendJson(response, HttpServletResponse.SC_INTERNAL_SERVER_ERROR, Map.of("error", "Database error: " + e.getMessage()));
+            } else {
+                throw new ServletException("Database error during registration", e);
+            }
+        }
     }
 }

@@ -1,7 +1,5 @@
 package com.techfest.dao;
 
-import java.util.Map;
-import java.util.HashMap;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -14,25 +12,36 @@ import com.techfest.config.DBConnection;
 import com.techfest.model.Registration;
 
 public class RegistrationDAO {
-    public void registerStudent(long userId, long eventId) throws SQLException, RegistrationException {
-        String lockAndReadEvent = "SELECT STATUS, MAX_PARTICIPANTS, REGISTRATION_DEADLINE FROM EVENTS WHERE EVENT_ID = ? FOR UPDATE";
-        String readCurrentCount = "SELECT COUNT(*) AS TOTAL FROM REGISTRATIONS WHERE EVENT_ID = ? AND STATUS = 'CONFIRMED'";
-        String readExisting = "SELECT STATUS FROM REGISTRATIONS WHERE USER_ID = ? AND EVENT_ID = ?";
-        String insertRegistration = "INSERT INTO REGISTRATIONS (USER_ID, EVENT_ID, STATUS) VALUES (?, ?, 'CONFIRMED')";
+    public Registration registerStudent(long userId, String eventSlug, String teamName, String track)
+            throws SQLException, RegistrationException {
+        String lockAndReadEvent =
+            "SELECT EVENT_ID, EVENT_NAME, STATUS, MAX_PARTICIPANTS, REGISTRATION_DEADLINE FROM EVENTS WHERE LOWER(SLUG) = LOWER(?) FOR UPDATE";
+        String readCurrentCount =
+            "SELECT COUNT(*) AS TOTAL FROM REGISTRATIONS WHERE EVENT_ID = ? AND UPPER(STATUS) = 'CONFIRMED'";
+        String readExisting =
+            "SELECT STATUS FROM REGISTRATIONS WHERE USER_ID = ? AND EVENT_ID = ?";
+        String insertRegistration =
+            "INSERT INTO REGISTRATIONS (USER_ID, EVENT_ID, TEAM_NAME, TRACK_SELECTED, STATUS) VALUES (?, ?, ?, ?, 'CONFIRMED')";
+        String readInserted =
+            "SELECT REGISTRATION_ID, REG_NUMBER, REGISTERED_AT, STATUS FROM REGISTRATIONS WHERE USER_ID = ? AND EVENT_ID = ?";
 
         try (Connection conn = DBConnection.getConnection()) {
             conn.setAutoCommit(false);
             try {
+                long eventId;
+                String eventName;
                 String eventStatus;
                 Integer maxParticipants;
                 Timestamp deadline;
 
                 try (PreparedStatement ps = conn.prepareStatement(lockAndReadEvent)) {
-                    ps.setLong(1, eventId);
+                    ps.setString(1, eventSlug.trim());
                     try (ResultSet rs = ps.executeQuery()) {
                         if (!rs.next()) {
-                            throw new RegistrationException("Event not found.");
+                            throw new RegistrationException("Event not found: " + eventSlug);
                         }
+                        eventId = rs.getLong("EVENT_ID");
+                        eventName = rs.getString("EVENT_NAME");
                         eventStatus = rs.getString("STATUS");
                         int cap = rs.getInt("MAX_PARTICIPANTS");
                         maxParticipants = rs.wasNull() ? null : cap;
@@ -75,10 +84,34 @@ public class RegistrationDAO {
                 try (PreparedStatement ps = conn.prepareStatement(insertRegistration)) {
                     ps.setLong(1, userId);
                     ps.setLong(2, eventId);
+                    ps.setString(3, teamName);
+                    ps.setString(4, track);
                     ps.executeUpdate();
                 }
 
+                Registration reg = new Registration();
+                try (PreparedStatement ps = conn.prepareStatement(readInserted)) {
+                    ps.setLong(1, userId);
+                    ps.setLong(2, eventId);
+                    try (ResultSet rs = ps.executeQuery()) {
+                        if (rs.next()) {
+                            reg.setRegistrationId(rs.getLong("REGISTRATION_ID"));
+                            reg.setRegNumber(rs.getString("REG_NUMBER"));
+                            reg.setRegisteredAt(rs.getTimestamp("REGISTERED_AT"));
+                            reg.setStatus(rs.getString("STATUS"));
+                        }
+                    }
+                }
+
                 conn.commit();
+
+                reg.setUserId(userId);
+                reg.setEventId(eventId);
+                reg.setEventSlug(eventSlug);
+                reg.setEventName(eventName);
+                reg.setTeamName(teamName);
+                reg.setTrackSelected(track);
+                return reg;
             } catch (RegistrationException | SQLException ex) {
                 conn.rollback();
                 throw ex;
@@ -89,61 +122,76 @@ public class RegistrationDAO {
     }
 
     public List<Registration> getRegistrationsByUserId(long userId) throws SQLException {
-        String sql = "SELECT r.REGISTRATION_ID, r.USER_ID, r.EVENT_ID, r.REGISTERED_AT, r.STATUS, e.EVENT_NAME FROM REGISTRATIONS r JOIN EVENTS e ON e.EVENT_ID = r.EVENT_ID WHERE r.USER_ID = ? ORDER BY r.REGISTERED_AT DESC";
-        List<Registration> registrations = new ArrayList<>();
+        String sql =
+            "SELECT r.REGISTRATION_ID, r.REG_NUMBER, r.USER_ID, r.EVENT_ID, r.TEAM_NAME, r.TRACK_SELECTED, r.REGISTERED_AT, r.STATUS, e.SLUG AS EVENT_SLUG, e.EVENT_NAME "
+            + "FROM REGISTRATIONS r JOIN EVENTS e ON e.EVENT_ID = r.EVENT_ID WHERE r.USER_ID = ? ORDER BY r.REGISTERED_AT DESC";
+        List<Registration> list = new ArrayList<>();
 
         try (Connection conn = DBConnection.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setLong(1, userId);
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
-                    Registration registration = mapRegistration(rs);
-                    registration.setEventName(rs.getString("EVENT_NAME"));
-                    registrations.add(registration);
+                    list.add(mapRegistration(rs));
                 }
             }
         }
-        return registrations;
+        return list;
     }
 
     public List<Registration> getAllRegistrations() throws SQLException {
-        String sql = "SELECT r.REGISTRATION_ID, r.USER_ID, r.EVENT_ID, r.REGISTERED_AT, r.STATUS, u.FULL_NAME, u.EMAIL, e.EVENT_NAME FROM REGISTRATIONS r JOIN USERS u ON u.USER_ID = r.USER_ID JOIN EVENTS e ON e.EVENT_ID = r.EVENT_ID ORDER BY r.REGISTERED_AT DESC";
-        List<Registration> registrations = new ArrayList<>();
+        String sql =
+            "SELECT r.REGISTRATION_ID, r.REG_NUMBER, r.USER_ID, r.EVENT_ID, r.TEAM_NAME, r.TRACK_SELECTED, r.REGISTERED_AT, r.STATUS, e.SLUG AS EVENT_SLUG, e.EVENT_NAME, u.FULL_NAME AS USER_NAME, u.EMAIL AS USER_EMAIL, u.DEPARTMENT AS USER_DEPT "
+            + "FROM REGISTRATIONS r JOIN EVENTS e ON e.EVENT_ID = r.EVENT_ID JOIN USERS u ON u.USER_ID = r.USER_ID ORDER BY r.REGISTERED_AT DESC";
+        List<Registration> list = new ArrayList<>();
 
         try (Connection conn = DBConnection.getConnection();
-                PreparedStatement ps = conn.prepareStatement(sql);
-                ResultSet rs = ps.executeQuery()) {
+             PreparedStatement ps = conn.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
             while (rs.next()) {
-                Registration registration = mapRegistration(rs);
-                registration.setUserName(rs.getString("FULL_NAME"));
-                registration.setUserEmail(rs.getString("EMAIL"));
-                registration.setEventName(rs.getString("EVENT_NAME"));
-                registrations.add(registration);
+                list.add(mapRegistration(rs));
             }
         }
-
-        return registrations;
+        return list;
     }
 
-    public Map<Long, Integer> getRegistrationCountsByEvent() throws SQLException {
-        String sql = "SELECT EVENT_ID, COUNT(*) AS TOTAL FROM REGISTRATIONS WHERE STATUS = 'CONFIRMED' GROUP BY EVENT_ID";
-        Map<Long, Integer> counts = new HashMap<>();
+    public int countConfirmedRegistrations() throws SQLException {
+        String sql = "SELECT COUNT(*) FROM REGISTRATIONS WHERE UPPER(STATUS) = 'CONFIRMED'";
         try (Connection conn = DBConnection.getConnection();
-                PreparedStatement ps = conn.prepareStatement(sql);
-                ResultSet rs = ps.executeQuery()) {
-            while (rs.next()) {
-                counts.put(rs.getLong("EVENT_ID"), rs.getInt("TOTAL"));
+             PreparedStatement ps = conn.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
+            return rs.next() ? rs.getInt(1) : 0;
+        }
+    }
+
+    public boolean isRegistered(long userId, String eventSlug) throws SQLException {
+        String sql = "SELECT 1 FROM REGISTRATIONS r JOIN EVENTS e ON e.EVENT_ID = r.EVENT_ID WHERE r.USER_ID = ? AND LOWER(e.SLUG) = LOWER(?)";
+        try (Connection conn = DBConnection.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setLong(1, userId);
+            ps.setString(2, eventSlug.trim());
+            try (ResultSet rs = ps.executeQuery()) {
+                return rs.next();
             }
         }
-        return counts;
     }
 
     private Registration mapRegistration(ResultSet rs) throws SQLException {
-        Registration registration = new Registration();
-        registration.setRegistrationId(rs.getLong("REGISTRATION_ID"));
-        registration.setUserId(rs.getLong("USER_ID"));
-        registration.setEventId(rs.getLong("EVENT_ID"));
-        registration.setRegisteredAt(rs.getTimestamp("REGISTERED_AT"));
-        registration.setStatus(rs.getString("STATUS"));
-        return registration;
+        Registration r = new Registration();
+        r.setRegistrationId(rs.getLong("REGISTRATION_ID"));
+        r.setRegNumber(rs.getString("REG_NUMBER"));
+        r.setUserId(rs.getLong("USER_ID"));
+        r.setEventId(rs.getLong("EVENT_ID"));
+        r.setTeamName(rs.getString("TEAM_NAME"));
+        r.setTrackSelected(rs.getString("TRACK_SELECTED"));
+        r.setRegisteredAt(rs.getTimestamp("REGISTERED_AT"));
+        r.setStatus(rs.getString("STATUS"));
+        r.setEventSlug(rs.getString("EVENT_SLUG"));
+        r.setEventName(rs.getString("EVENT_NAME"));
+        try {
+            r.setUserName(rs.getString("USER_NAME"));
+            r.setUserEmail(rs.getString("USER_EMAIL"));
+            r.setDepartment(rs.getString("USER_DEPT"));
+        } catch (SQLException ignored) {
+        }
+        return r;
     }
 }

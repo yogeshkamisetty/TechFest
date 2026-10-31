@@ -13,28 +13,41 @@ import javax.servlet.http.HttpSession;
 
 import com.techfest.dao.RegistrationDAO;
 import com.techfest.model.Registration;
+import com.techfest.util.JsonUtil;
 
 @WebServlet("/my-registrations")
 public class MyRegistrationsServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
-
     private final RegistrationDAO registrationDAO = new RegistrationDAO();
 
     @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
         HttpSession session = request.getSession(false);
-        if (session == null || session.getAttribute("userId") == null) {
-            response.sendRedirect(request.getContextPath() + "/login.jsp?message=Please+log+in");
+        Long userId = session != null ? (Long) session.getAttribute("userId") : null;
+        if (userId == null) {
+            response.sendRedirect(request.getContextPath() + "/login.html?next=my-registrations.html");
             return;
         }
 
         try {
-            long userId = ((Number) session.getAttribute("userId")).longValue();
-            List<Registration> registrations = registrationDAO.getRegistrationsByUserId(userId);
-            request.setAttribute("registrations", registrations);
-            request.getRequestDispatcher("/my-registrations.jsp").forward(request, response);
-        } catch (SQLException ex) {
-            throw new ServletException("Could not load registrations", ex);
+            List<Registration> regs = registrationDAO.getRegistrationsByUserId(userId);
+
+            String accept = request.getHeader("Accept");
+            if (accept != null && accept.contains("application/json")) {
+                JsonUtil.sendJson(response, HttpServletResponse.SC_OK, regs);
+                return;
+            }
+
+            request.setAttribute("registrations", regs);
+            if (getServletContext().getResource("/my-registrations.jsp") != null) {
+                request.getRequestDispatcher("/my-registrations.jsp").forward(request, response);
+            } else {
+                response.sendRedirect(request.getContextPath() + "/my-registrations.html");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new ServletException("Failed to fetch registrations", e);
         }
     }
 }

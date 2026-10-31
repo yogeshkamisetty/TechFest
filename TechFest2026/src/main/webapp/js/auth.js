@@ -2,7 +2,7 @@ import { State, DEMO_CREDENTIALS, ADMIN_CREDENTIALS } from './state.js';
 
 const urlParams = new URLSearchParams(window.location.search);
 const rawNext = urlParams.get('next');
-const nextUrl = rawNext && !rawNext.startsWith('//') ? rawNext : 'my-registrations.html';
+const nextUrl = rawNext && !rawNext.startsWith('//') ? rawNext : 'index.html';
 
 const alertSvg = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9" /><path d="M12 7v6M12 17h.01" /></svg>`;
 const checkSvg = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9" /><path d="m8 12 3 3 5-6" /></svg>`;
@@ -67,7 +67,7 @@ if (loginForm) {
     if (passwordHelp) passwordHelp.style.display = 'none';
   }
 
-  loginForm.addEventListener('submit', (e) => {
+  loginForm.addEventListener('submit', async (e) => {
     e.preventDefault();
     clearLoginErrors();
 
@@ -87,33 +87,35 @@ if (loginForm) {
       btnInner.innerHTML = `<span class="btn-spinner" aria-label="Logging in"></span>`;
     }
 
-    setTimeout(() => {
-      const ok = State.login(email, password);
-      if (ok) {
-        const user = State.getUser();
-        if (user && user.role === 'admin' && !rawNext) {
-          window.location.href = 'admin.html';
-        } else {
-          window.location.href = nextUrl;
-        }
+    const ok = await State.login(email, password);
+    if (ok) {
+      const loggedUser = State.getUser();
+      if (loggedUser && (loggedUser.role === 'admin' || loggedUser.role === 'ADMIN') && !rawNext) {
+        window.location.href = 'admin.html';
       } else {
-        if (submitShell) submitShell.disabled = false;
-        if (btnInner) {
-          btnInner.classList.remove('is-loading');
-          btnInner.textContent = 'Log In';
-        }
-        if (loginAlertSlot) {
-          loginAlertSlot.innerHTML = `
-            <div class="alert-ds alert-error" role="alert">
-              ${alertSvg}Invalid email or password.
-            </div>
-          `;
-        }
-        if (emailGroup) emailGroup.classList.add('input-error');
-        if (passwordGroup) passwordGroup.classList.add('input-error');
-        if (passwordHelp) passwordHelp.style.display = 'flex';
+        window.location.href = nextUrl;
       }
-    }, 600);
+    } else {
+      if (submitShell) submitShell.disabled = false;
+      if (btnInner) {
+        btnInner.classList.remove('is-loading');
+        btnInner.textContent = 'Log In';
+      }
+      if (loginAlertSlot) {
+        loginAlertSlot.innerHTML = `
+          <div class="alert-ds alert-error" role="alert">
+            ${alertSvg}
+            <div>
+              Invalid email or password.<br>
+              <small style="display:block;margin-top:4px;">Don't have an account yet? <a href="signup.html" style="color:#0B7A70;font-weight:700;text-decoration:underline;">Click here to register</a></small>
+            </div>
+          </div>
+        `;
+      }
+      if (emailGroup) emailGroup.classList.add('input-error');
+      if (passwordGroup) passwordGroup.classList.add('input-error');
+      if (passwordHelp) passwordHelp.style.display = 'flex';
+    }
   });
 }
 
@@ -258,7 +260,7 @@ if (signupForm) {
     });
   }
 
-  signupForm.addEventListener('submit', (e) => {
+  signupForm.addEventListener('submit', async (e) => {
     e.preventDefault();
 
     const name = sName.value.trim();
@@ -332,24 +334,25 @@ if (signupForm) {
       signupBtnInner.innerHTML = `<span class="btn-spinner" aria-label="Creating account"></span>`;
     }
 
-    setTimeout(() => {
-      const res = State.signup({ name, email, password, department });
-      if (res === 'ok') {
-        window.location.href = nextUrl;
-      } else {
-        if (signupSubmitBtn) signupSubmitBtn.disabled = false;
-        if (signupBtnInner) {
-          signupBtnInner.classList.remove('is-loading');
-          signupBtnInner.textContent = 'Create Account';
-        }
-        if (signupAlertSlot) {
-          signupAlertSlot.innerHTML = `
-            <div class="alert-ds alert-error" role="alert">
-              ${alertSvg}An account with this email already exists. <a href="login.html" class="inline-link" style="color:#0B7A70;font-weight:600;margin-left:4px;">Log in instead</a>
-            </div>
-          `;
-        }
+    const res = await State.signup({ name, email, password, department });
+    if (res === 'ok') {
+      window.location.href = nextUrl;
+    } else {
+      if (signupSubmitBtn) signupSubmitBtn.disabled = false;
+      if (signupBtnInner) {
+        signupBtnInner.classList.remove('is-loading');
+        signupBtnInner.textContent = 'Create Account';
       }
-    }, 600);
+      if (signupAlertSlot) {
+        const msg = res === 'exists'
+          ? `An account with this email already exists. <a href="login.html" class="inline-link" style="color:#0B7A70;font-weight:600;margin-left:4px;">Log in instead</a>`
+          : (res || 'Registration failed. Please try again.');
+        signupAlertSlot.innerHTML = `
+          <div class="alert-ds alert-error" role="alert">
+            ${alertSvg}${msg}
+          </div>
+        `;
+      }
+    }
   });
 }
