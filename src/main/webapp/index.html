@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tech Fest Hub — Where Code Meets Celebration</title>
+  <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+  <link rel="stylesheet" href="css/style.css?v=6">
+</head>
+<body class="home-frame" data-layer="01-home">
+  <!-- Standard Navbar -->
+  <header class="home-navbar" data-layer="navbar" id="site-header">
+    <div class="home-nav-inner">
+      <a href="index.html" class="home-logo">
+        <span class="tech-badge-icon">&lt;/&gt;</span>TECH FEST HUB
+      </a>
+      <nav aria-label="Primary">
+        <a href="index.html" class="active">Home</a>
+        <a href="events.jsp">Events</a>
+        <a href="my-registrations.jsp">My Registrations</a>
+      </nav>
+      <div class="home-auth">
+        <a href="login.html">Login</a>
+        <a href="signup.html" class="btn btn-primary btn-size-m is-default" data-layer="btn btn-primary"><span>Sign Up</span></a>
+      </div>
+      <button type="button" class="home-menu-btn" id="nav-menu-btn" aria-label="Open menu" aria-expanded="false" aria-controls="mobile-menu">
+        <i></i><i></i><i></i>
+      </button>
+    </div>
+    <div class="mobile-menu" id="mobile-menu" style="display: none;">
+      <nav aria-label="Mobile">
+        <a href="index.html" class="active">Home</a>
+        <a href="events.jsp">Events</a>
+        <a href="my-registrations.jsp">My Registrations</a>
+      </nav>
+      <div class="mobile-menu-auth">
+        <a href="login.html" class="btn btn-secondary btn-size-m is-default"><span>Login</span></a>
+        <a href="signup.html" class="btn btn-primary btn-size-m is-default"><span>Sign Up</span></a>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <!-- Hero Section -->
+    <section class="home-hero" style="min-height: auto; padding: 64px 0 80px;">
+      <div class="home-container" style="display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 48px; align-items: center;">
+        <div class="hero-left">
+          <div class="hero-pill" style="margin-bottom: 20px;">
+            <span style="font-family: var(--mono); color: #0B7A70; font-weight: 700;">&lt;/&gt;</span>
+            TECH FEST 2026 &bull; REGISTRATIONS OPEN
+          </div>
+          <h1 class="hero-title" style="margin-bottom: 20px;">
+            <span>Discover.</span>
+            <span>Compete.</span>
+            <em>Innovate.</em>
+          </h1>
+          <p class="hero-sub-home" style="margin-bottom: 32px;">
+            One campus hub to explore technical events, compete with your peers and register your digital pass in seconds.
+          </p>
+          <div class="home-hero-actions" style="margin-bottom: 40px;">
+            <a href="events.jsp" class="btn btn-primary btn-size-l is-default">
+              <span>Explore Events</span>
+              <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M14 7l5 5-5 5" /></svg>
+            </a>
+            <a href="signup.html" class="btn btn-secondary btn-size-l is-default">
+              <span>Create Account</span>
+            </a>
+          </div>
+          <div class="hero-stats" style="margin-top: 0;">
+            <div><strong>09</strong><span>EVENTS</span></div>
+            <div><strong>7</strong><span>CATEGORIES</span></div>
+            <div><strong>1</strong><span>CAMPUS ARENA</span></div>
+          </div>
+        </div>
+
+        <!-- Tech Fest Visual Illustration -->
+        <div class="hero-tech-visual" style="text-align: center;">
+          <img src="images/tech-home.svg" alt="College Technical Fest 2026" style="width: 100%; max-width: 520px; height: auto; display: block; margin: 0 auto; filter: drop-shadow(0 12px 30px rgba(138, 90, 60, 0.08));" />
+        </div>
+      </div>
+    </section>
+
+    <!-- Categories Arena Section -->
+    <section class="home-categories home-container" style="padding: 64px 0;">
+      <div class="section-title centered" role="heading" aria-level="2">Pick your <em>arena</em></div>
+      <div class="arena-tiles" id="arena-tiles" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 20px; margin-top: 36px;">
+        <a href="events.jsp?category=Coding" class="arena-tile" style="text-decoration: none;">
+          <span class="arena-emblem" style="font-family: var(--mono); font-size: 24px; font-weight: 700;">&lt;/&gt;</span>
+          <b style="color: #5B3A29; font-size: 16px;">Coding</b>
+          <small style="color: #8A5A3C; font-size: 12px; margin-top: 4px;">Algorithms &amp; Sprints</small>
+        </a>
+        <a href="events.jsp?category=Hackathon" class="arena-tile" style="text-decoration: none;">
+          <span class="arena-emblem" style="font-size: 24px;">✦</span>
+          <b style="color: #5B3A29; font-size: 16px;">Hackathon</b>
+          <small style="color: #8A5A3C; font-size: 12px; margin-top: 4px;">24-Hour Marathon</small>
+        </a>
+        <a href="events.jsp?category=Robotics" class="arena-tile" style="text-decoration: none;">
+          <span class="arena-emblem" style="font-size: 24px;">⌁</span>
+          <b style="color: #5B3A29; font-size: 16px;">Robotics</b>
+          <small style="color: #8A5A3C; font-size: 12px; margin-top: 4px;">Arena Battles</small>
+        </a>
+        <a href="events.jsp?category=Quiz" class="arena-tile" style="text-decoration: none;">
+          <span class="arena-emblem" style="font-size: 24px;">?</span>
+          <b style="color: #5B3A29; font-size: 16px;">Quiz</b>
+          <small style="color: #8A5A3C; font-size: 12px; margin-top: 4px;">BrainWave League</small>
+        </a>
+        <a href="events.jsp?category=Gaming" class="arena-tile" style="text-decoration: none;">
+          <span class="arena-emblem" style="font-size: 24px;">◆</span>
+          <b style="color: #5B3A29; font-size: 16px;">Gaming</b>
+          <small style="color: #8A5A3C; font-size: 12px; margin-top: 4px;">Squad Tournaments</small>
+        </a>
+        <a href="events.jsp?category=Design" class="arena-tile" style="text-decoration: none;">
+          <span class="arena-emblem" style="font-size: 24px;">◒</span>
+          <b style="color: #5B3A29; font-size: 16px;">Design</b>
+          <small style="color: #8A5A3C; font-size: 12px; margin-top: 4px;">UI &amp; Creative</small>
+        </a>
+      </div>
+    </section>
+
+    <!-- Featured Events Section -->
+    <section class="home-featured home-container" style="padding: 48px 0 80px;">
+      <div class="featured-head" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 32px;">
+        <div class="section-title" role="heading" aria-level="2">Featured events</div>
+        <a href="events.jsp" style="display: inline-flex; align-items: center; gap: 8px; color: #0B7A70; font-weight: 600; font-size: 15px; text-decoration: none;">
+          View all events <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="width: 18px; height: 18px;"><path d="M5 12h14M14 7l5 5-5 5" /></svg>
+        </a>
+      </div>
+      <div class="home-event-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 24px; align-items: stretch;">
+        <article class="ds-event-card cat-hackathon">
+          <div class="event-art">
+            <div class="clay-emblem"><span>✦</span></div>
+          </div>
+          <div class="event-body">
+            <span class="event-category cat-hackathon"><i></i>Hackathon</span>
+            <div class="event-title" role="heading" aria-level="3">CodeStorm — 24-Hour Hackathon</div>
+            <div class="event-date-row">
+              <span class="event-date">Sat 14 Nov &bull; 10:00 AM</span>
+            </div>
+            <div class="event-venue">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 21s7-5.5 7-12a7 7 0 0 0-14 0c0 6.5 7 12 7 12Z"/><circle cx="12" cy="9" r="2.5"/></svg>
+              Main Auditorium
+            </div>
+          </div>
+          <div class="event-perforation"></div>
+          <div class="event-stub-ds">
+            <div class="stub-meta" style="display: flex; justify-content: space-between; align-items: center;">
+              <span class="fee-badge fee-paid">₹250</span>
+              <span class="badge badge-open"><i></i>OPEN</span>
+            </div>
+            <div class="stub-actions" style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+              <a href="event-details.jsp?slug=codestorm" class="btn btn-secondary btn-size-m" style="text-decoration: none; text-align: center;"><span>Details</span></a>
+              <a href="register.jsp?slug=codestorm" class="btn btn-primary btn-size-m" style="text-decoration: none; text-align: center;"><span>Register</span></a>
+            </div>
+          </div>
+        </article>
+
+        <article class="ds-event-card cat-quiz">
+          <div class="event-art">
+            <div class="clay-emblem"><span>?</span></div>
+          </div>
+          <div class="event-body">
+            <span class="event-category cat-quiz"><i></i>Quiz</span>
+            <div class="event-title" role="heading" aria-level="3">BrainWave Quiz League</div>
+            <div class="event-date-row">
+              <span class="event-date">Mon 16 Nov &bull; 2:00 PM</span>
+            </div>
+            <div class="event-venue">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 21s7-5.5 7-12a7 7 0 0 0-14 0c0 6.5 7 12 7 12Z"/><circle cx="12" cy="9" r="2.5"/></svg>
+              Seminar Hall 2
+            </div>
+          </div>
+          <div class="event-perforation"></div>
+          <div class="event-stub-ds">
+            <div class="stub-meta" style="display: flex; justify-content: space-between; align-items: center;">
+              <span class="fee-badge fee-free">Free</span>
+              <span class="badge badge-open"><i></i>OPEN</span>
+            </div>
+            <div class="stub-actions" style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+              <a href="event-details.jsp?slug=brainwave-quiz-league" class="btn btn-secondary btn-size-m" style="text-decoration: none; text-align: center;"><span>Details</span></a>
+              <a href="register.jsp?slug=brainwave-quiz-league" class="btn btn-primary btn-size-m" style="text-decoration: none; text-align: center;"><span>Register</span></a>
+            </div>
+          </div>
+        </article>
+
+        <article class="ds-event-card cat-robotics">
+          <div class="event-art">
+            <div class="clay-emblem"><span>⌁</span></div>
+          </div>
+          <div class="event-body">
+            <span class="event-category cat-robotics"><i></i>Robotics</span>
+            <div class="event-title" role="heading" aria-level="3">RoboRumble</div>
+            <div class="event-date-row">
+              <span class="event-date">Sat 21 Nov &bull; 9:30 AM</span>
+            </div>
+            <div class="event-venue">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 21s7-5.5 7-12a7 7 0 0 0-14 0c0 6.5 7 12 7 12Z"/><circle cx="12" cy="9" r="2.5"/></svg>
+              Mech Block Arena
+            </div>
+          </div>
+          <div class="event-perforation"></div>
+          <div class="event-stub-ds">
+            <div class="stub-meta" style="display: flex; justify-content: space-between; align-items: center;">
+              <span class="fee-badge fee-paid">₹150</span>
+              <span class="badge badge-open"><i></i>OPEN</span>
+            </div>
+            <div class="stub-actions" style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+              <a href="event-details.jsp?slug=roborumble" class="btn btn-secondary btn-size-m" style="text-decoration: none; text-align: center;"><span>Details</span></a>
+              <a href="register.jsp?slug=roborumble" class="btn btn-primary btn-size-m" style="text-decoration: none; text-align: center;"><span>Register</span></a>
+            </div>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <!-- Three Steps Section -->
+    <section class="home-how" id="how-it-works" style="padding: 64px 0;">
+      <div class="home-container">
+        <div class="section-title centered" role="heading" aria-level="2">Three steps to the <em>arena</em></div>
+        <div class="how-steps" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 24px; margin-top: 40px;">
+          <article style="background: #FFFFFF; border: 1px solid #F0DCC0; border-radius: 16px; padding: 28px; box-shadow: 0 4px 16px rgba(138,90,60,0.06);">
+            <span style="font-family: var(--mono); font-size: 14px; font-weight: 700; color: #0B7A70;">STEP 01</span>
+            <div style="font-size: 20px; font-weight: 700; color: #5B3A29; margin: 12px 0 8px;">Create your account</div>
+            <p style="color: #8A5A3C; margin: 0; font-size: 14px;">Sign up with your college email and department.</p>
+          </article>
+          <article style="background: #FFFFFF; border: 1px solid #F0DCC0; border-radius: 16px; padding: 28px; box-shadow: 0 4px 16px rgba(138,90,60,0.06);">
+            <span style="font-family: var(--mono); font-size: 14px; font-weight: 700; color: #FF9933;">STEP 02</span>
+            <div style="font-size: 20px; font-weight: 700; color: #5B3A29; margin: 12px 0 8px;">Pick an event</div>
+            <p style="color: #8A5A3C; margin: 0; font-size: 14px;">Browse by category and review event details and venue.</p>
+          </article>
+          <article style="background: #FFFFFF; border: 1px solid #F0DCC0; border-radius: 16px; padding: 28px; box-shadow: 0 4px 16px rgba(138,90,60,0.06);">
+            <span style="font-family: var(--mono); font-size: 14px; font-weight: 700; color: #D45D3A;">STEP 03</span>
+            <div style="font-size: 20px; font-weight: 700; color: #5B3A29; margin: 12px 0 8px;">Get your pass</div>
+            <p style="color: #8A5A3C; margin: 0; font-size: 14px;">Register in one click and access your pass in My Registrations.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Standard Clean Footer -->
+  <footer class="home-footer">
+    <div class="home-footer-inner home-container">
+      <div class="footer-brand">
+        <div class="home-logo">
+          <span class="tech-badge-icon">&lt;/&gt;</span>TECH FEST HUB
+        </div>
+        <p>Annual Technical Festival 2026. Explore technical events, compete with your peers and register your digital pass in seconds.</p>
+      </div>
+      <div class="footer-links">
+        <b>Quick Links</b>
+        <a href="index.html">Home</a>
+        <a href="events.jsp">Events</a>
+        <a href="my-registrations.jsp">My Registrations</a>
+        <a href="login.html">Login</a>
+        <a href="signup.html">Create Account</a>
+      </div>
+      <div class="footer-info">
+        <b>Contact &amp; Venue</b>
+        <p>Main Administrative Block, Campus Arena<br>Email: techfest2026@college.edu<br>Helpline: +91 98765 43210</p>
+      </div>
+    </div>
+    <div class="footer-bottom home-container">
+      <p>&copy; 2026 Tech Fest Hub</p>
+    </div>
+  </footer>
+
+  <script src="js/script.js"></script>
+</body>
+</html>

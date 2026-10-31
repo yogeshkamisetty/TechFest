@@ -1,0 +1,79 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 450 360" width="100%" height="100%">
+  <defs>
+    <linearGradient id="cardGradSignup" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FFFFFF" />
+      <stop offset="100%" stop-color="#FFFDF9" />
+    </linearGradient>
+    <linearGradient id="monitorGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#1E293B" />
+      <stop offset="100%" stop-color="#0F172A" />
+    </linearGradient>
+    <filter id="signupGlow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="6" stdDeviation="10" flood-color="#8A5A3C" flood-opacity="0.1" />
+    </filter>
+  </defs>
+
+  <!-- Background Base Container -->
+  <rect x="15" y="15" width="420" height="330" rx="20" fill="url(#cardGradSignup)" stroke="#F0DCC0" stroke-width="2" />
+
+  <!-- Circuit Pattern -->
+  <g stroke="#EAD8C3" stroke-width="2" stroke-linecap="round" fill="none">
+    <path d="M 40 70 H 110 L 135 95" />
+    <circle cx="40" cy="70" r="3.5" fill="#FF9933" />
+    <path d="M 410 70 H 340 L 315 95" />
+    <circle cx="410" cy="70" r="3.5" fill="#0B7A70" />
+    <path d="M 50 290 H 120 L 145 265" />
+    <circle cx="50" cy="290" r="3.5" fill="#0B7A70" />
+    <path d="M 400 290 H 330 L 305 265" />
+    <circle cx="400" cy="290" r="3.5" fill="#FFC83D" />
+  </g>
+
+  <!-- Central Monitor & Student Workstation Visual -->
+  <g filter="url(#signupGlow)" transform="translate(100, 45)">
+    <!-- Monitor Outer Frame -->
+    <rect x="0" y="0" width="250" height="160" rx="10" fill="#334155" stroke="#1E293B" stroke-width="2" />
+    <!-- Monitor Screen -->
+    <rect x="10" y="10" width="230" height="140" rx="4" fill="url(#monitorGrad)" />
+
+    <!-- IDE Header -->
+    <rect x="10" y="10" width="230" height="18" fill="#1E293B" />
+    <circle cx="22" cy="19" r="3" fill="#EF4444" />
+    <circle cx="32" cy="19" r="3" fill="#F59E0B" />
+    <circle cx="42" cy="19" r="3" fill="#10B981" />
+    <text x="125" y="23" font-family="monospace" font-size="8" fill="#94A3B8" text-anchor="middle">StudentRegistration.sql</text>
+
+    <!-- Code & Enrollment Blocks -->
+    <rect x="25" y="38" width="60" height="6" rx="3" fill="#FF9933" />
+    <rect x="95" y="38" width="80" height="6" rx="3" fill="#0E9F90" />
+    <rect x="40" y="52" width="120" height="6" rx="3" fill="#64748B" />
+    <rect x="40" y="66" width="90" height="6" rx="3" fill="#64748B" />
+
+    <!-- Digital Ticket Inset -->
+    <rect x="30" y="86" width="190" height="52" rx="6" fill="#1E293B" stroke="#475569" stroke-width="1" />
+    <circle cx="50" cy="112" r="14" fill="#0B7A70" />
+    <!-- User Icon in Badge -->
+    <circle cx="50" cy="108" r="5" fill="#FFFFFF" />
+    <path d="M 42 120 C 42 115, 58 115, 58 120" stroke="#FFFFFF" stroke-width="2" fill="none" stroke-linecap="round" />
+    <text x="74" y="108" font-family="sans-serif" font-size="11" font-weight="700" fill="#FFFFFF">Digital Campus Pass</text>
+    <text x="74" y="122" font-family="monospace" font-size="9" fill="#34D399">STATUS: CONFIRMED</text>
+
+    <!-- Monitor Stand -->
+    <rect x="110" y="160" width="30" height="28" fill="#64748B" />
+    <path d="M 85 188 L 165 188 L 175 195 L 75 195 Z" fill="#475569" />
+  </g>
+
+  <!-- Left Floating Pill: INSTANT ACCESS -->
+  <g filter="url(#signupGlow)" transform="translate(30, 240)">
+    <rect width="115" height="34" rx="8" fill="#FFFFFF" stroke="#F0DCC0" stroke-width="1.2" />
+    <text x="57" y="21" font-family="sans-serif" font-size="11" font-weight="700" fill="#0B7A70" text-anchor="middle">Solo &amp; Team</text>
+  </g>
+
+  <!-- Right Floating Pill: ALL COMPETITIONS -->
+  <g filter="url(#signupGlow)" transform="translate(305, 240)">
+    <rect width="115" height="34" rx="8" fill="#FFFFFF" stroke="#F0DCC0" stroke-width="1.2" />
+    <text x="57" y="21" font-family="sans-serif" font-size="11" font-weight="700" fill="#FF9933" text-anchor="middle">Instant Pass</text>
+  </g>
+
+  <!-- Bottom Caption -->
+  <text x="225" y="320" font-family="sans-serif" font-size="12" font-weight="600" fill="#8A5A3C" text-anchor="middle">Enroll Once &bull; Access All 9 Technical Events</text>
+</svg>
